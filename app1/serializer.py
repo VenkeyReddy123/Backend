@@ -15,7 +15,7 @@ from django.contrib.auth.models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model=User 
-        fields=['username','firstname','lastname','email']
+        fields=['username','firstname','lastname','email','password']
 
 
 #Login Seializer
@@ -53,7 +53,10 @@ class CustamerSerializer(serializers.ModelSerializer):
 #         model=Rating
 #         fields='__all__'
 
-
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Products
+        fields='__all__'
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -62,11 +65,15 @@ class ImageSerializer(serializers.ModelSerializer):
         fields='__all__'
 
 #User Model Serializer
+class AddCardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Add_TO_Card
+        fields='__all__'
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','username', 'first_name', 'last_name', 'email',]
+        fields = ['id','username', 'first_name', 'last_name', 'email','password',]
 
 #ProfileSerializer
 
@@ -74,6 +81,23 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields ='__all__'
+
+class UserChekSerilizer(serializers.ModelSerializer):
+    class Meta:
+        model=User 
+        fields=['username','password']
+
+class ProductDisplaySerilizer(serializers.ModelSerializer):
+    Product_Name = ProductSerializer()
+    
+    class Meta:
+        model = Image 
+        fields = ['P_Images', 'ImageUrl','Product_Name']  # Include 'Product_Name' in the fields list
+
+
+
+
+
 
 
 

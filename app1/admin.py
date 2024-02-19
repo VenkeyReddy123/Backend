@@ -11,3 +11,5 @@ admin.site.register(Products)
 admin.site.register(Profile)
 
 admin.site.register(Orders)
+
+admin.site.register(Image)

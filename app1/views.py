@@ -28,14 +28,10 @@ def LoginDetails(request):
         Serializer_Data=LoginSerializer(Data,many=True)
         return Response(Serializer_Data.data,status=status.HTTP_201_CREATED)
     elif(request.method=='POST'):
-        print('POST')
         data=request.data 
-        print(data)
-        print(data['Custamer_Name'],data['Email'])
-
         serializer=LoginSerializer(data=data)
         if(serializer.is_valid()):
-             serializer.save()
+             serializer.set_password(data['Pasword'])
              return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'PATCH':
@@ -52,6 +48,31 @@ def LoginDetails(request):
             except Login.DoesNotExist:
                 return Response("Customer not found", status=status.HTTP_404_NOT_FOUND)
         
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from django.http import HttpResponseRedirect
 
 
 #Product Details
@@ -71,47 +92,29 @@ def ProductDetails(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    elif request.method == 'PATCH':
-        username = request.data.get('username')
-        user = User.objects.get(username=username)
-        # product_id = request.data.get('Id')
-        request.data['username'] = user.pk
-        if product_id is None:
-            return Response({'error': 'Product ID is missing from the request'}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            product = Products.objects.get(Id=product_id)
-        except Products.DoesNotExist:
-            return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = ProductSerializer(instance=product, data=request.data, partial=True)
+    elif request.method=='PATCH':
+        print('Patch')
+        print(request.data['pk'])
+        PO=Products.objects.get(pk=request.data['pk'])
+        serializer=ProductSerializer(PO,data=request.data,partial=True)
         if serializer.is_valid():
             serializer.save()
-            print('Ending')
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    elif request.method == 'DELETE':
-        username = request.data.get('username')
-        user = User.objects.get(username=username)
-        product_id = request.data.get('Id')
-        request.data['username'] = user.pk
-        if product_id is None:
-            return Response({'error': 'Product ID is missing from the request'}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            product = Products.objects.get(Id=product_id)
-            product.delete()
-
-        except Products.DoesNotExist:
-            return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        return Response({'Message':'DeletedSuccess'}, status=status.HTTP_200_OK)
-    
+    else:
+        PO=Products.objects.get(pk=request.data['pk'])
+        serializer=ProductSerializer(PO,data=request.data,partial=True)
+        if serializer.is_valid():
+            PO.delete()
+            return Response({"Message":"Success"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
 #-----------------------------------------------------------------------------------
 #------------------------------------------------------------------------
 #---------------------------------------------------------------- 
     
+
 # OrderDetails
+    
 @api_view(['GET','POST','PATCH','PUT','DELETE'])
 def OrderDetails(request):
     if(request.method=='GET'):
@@ -119,26 +122,15 @@ def OrderDetails(request):
         Serializer_Data=OrderSerializer(Data,many=True)
         return Response(Serializer_Data.data,status=status.HTTP_201_CREATED)
     elif(request.method=='POST'):
-        print('POST')
-        Data=request.data 
-        pn=Data['Product_Name']
-        PO=Products.objects.get(Product_Name=pn)
-        print(PO.username)
-    #-----------------Custaner_Name
-        cn=Data['Custamer_Name']
-        CO=Login.objects.get(Custamer_Name=cn)
-        Data['Custamer_Name']=CO.pk
-    #------------------Usename id POsting
-        UO=User.objects.get(username=PO.username)
-        Data['username']=UO.pk
-    #-------------------Product id posting
-        Data['Product_Name']=PO.pk    
-    #---------------Serilization
-        serializer = OrderSerializer(data=Data)
-        print(Data)
+        email=request.data['Custamer_Name']
+        CO=Login.objects.get(Email=email)
+        request.data['Custamer_Name']=CO.pk
+        serializer = OrderSerializer(data=request.data)
+        print('ok')
         if(serializer.is_valid()):
-             print('Ok')
+             print('okok')
              serializer.save()
+             print('okok')
              return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  
         
@@ -235,11 +227,19 @@ def  UserDetails(request):
         Data=User.objects.all()
         Serializer_Data=UserSerializer(Data,many=True)
         return Response(Serializer_Data.data,status=status.HTTP_201_CREATED)
-    elif(request.method=='POST'):
-        data=request.data 
-        serializer=UserSerializer(data=data)
-        if(serializer.is_valid()):
-            serializer.save()
+    elif request.method == 'POST':
+        data = request.data
+        serializer = UserSerializer(data=data)
+        if serializer.is_valid():
+            print(serializer.validated_data)
+            # Get validated data
+            validated_data = serializer.validated_data
+            # Create a new user instance with validated data
+            user = serializer.create(validated_data)
+            # Set the password for the user
+            user.set_password(data['password'])
+            # Save the user with the updated password
+            user.save()
             send_mail('Registration',
             'Thanku For Registration',
             'venkateswarlureddy647@gmail.com',
@@ -257,15 +257,76 @@ def ImageDetails(request):
         return Response(Serializer_Data.data,status=status.HTTP_201_CREATED)
     elif request.method == 'POST':
         pname = request.data.get('Product_Name')
-        print('POst')
         PO =Products.objects.get(Product_Name=pname)
         request.data['Product_Name'] =PO.pk
+        request.data['ImageUrl']=request.build_absolute_uri( request.data['P_Images'])
         serializer =ImageSerializer(data=request.data)
         print('Yes')
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method=='PATCH':
+        # pname = request.data.get('Product_Name')
+        # PO =Products.objects.get(Product_Name=pname)
+        # request.data['Product_Name'] =PO.pk
+        IO=Image.objects.get(pk=request.data['pk'])
+        request.data['ImageUrl']=request.build_absolute_uri(request.data['P_Images'])
+        print(request.data['ImageUrl'])
+        request.data.pop('P_Images')
+        serializer =ImageSerializer(IO,data=request.data,partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+from django.contrib.auth import authenticate
+@api_view(['POST'])
+def UserCheckDetails(request):
+    if(request.method=='POST'):
+        un=request.data.get('username')
+        pw=request.data.get('password')
+        AUO=authenticate(username=un,password=pw)
+        if(AUO):
+            print(True)
+            return Response({"Message":True},status=status.HTTP_201_CREATED)
+        else:
+            print(False)
+            return Response({"Message":False},status=status.HTTP_201_CREATED)
+           
+@api_view(['GET','POST','PATCH','PUT','DELETE'])
+def ProductDispalyView(request):
+    if(request.method=='GET'):
+        Data=Image.objects.all()
+        Serializer_Data=ProductDisplaySerilizer(Data,many=True)
+        return Response(Serializer_Data.data,status=status.HTTP_201_CREATED)
+@api_view(['GET','POST','PATCH','PUT','DELETE'])
+def AddCardDetails(request):
+    if(request.method=='GET'):
+        Data=Add_TO_Card.objects.all()
+        Serializer_Data=AddCardSerializer(Data,many=True)
+        return Response(Serializer_Data.data,status=status.HTTP_201_CREATED)
+    elif(request.method=='POST'):
+        email=request.data['Custamer_Name']
+        CO=Login.objects.get(Email=email)
+        request.data['Custamer_Name']=CO.pk
+        print('hi')
+        serializer=AddCardSerializer(data=request.data)
+        if(serializer.is_valid()):
+             print('bye')
+             serializer.save()
+             return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+          
+        
+
+
+
+
 
 
 
