@@ -2,15 +2,6 @@ from rest_framework import serializers
 from app1.models import *
 from django.contrib.auth.models import User
 
-# class UserSerai(serializers.Serializer):
-#     class Meta:
-#         model:User
-#         fields:['first_name','last_name','email']
-        
-# class ProfileSerai(serializers.Serializer):
-#     class Meta:
-#         model:Profile
-#         fields:['adress']
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -89,10 +80,24 @@ class UserChekSerilizer(serializers.ModelSerializer):
 
 class ProductDisplaySerilizer(serializers.ModelSerializer):
     Product_Name = ProductSerializer()
-    
     class Meta:
         model = Image 
         fields = ['P_Images', 'ImageUrl','Product_Name']  # Include 'Product_Name' in the fields list
+
+
+class LoginM(serializers.ModelSerializer):
+    class Meta:
+        model=Login 
+        fields=['Email','Custamer_Name']
+
+
+class AddCardDisplySerializer(serializers.ModelSerializer):
+    Custamer_Name=LoginM()
+    class Meta:
+        model=Add_TO_Card 
+        fields = ['Product_Name', 'Custamer_Name'] 
+    
+
 
 
 

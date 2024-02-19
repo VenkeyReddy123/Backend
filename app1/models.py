@@ -74,7 +74,7 @@ class Custamer_Details(models.Model):
     
 
 class Add_TO_Card(models.Model):
-    Custamer_Name=models.ForeignKey(Custamer_Details,on_delete=models.CASCADE)
+    Custamer_Name=models.ForeignKey(Login,on_delete=models.CASCADE)
     Product_Name=models.OneToOneField(Products,on_delete=models.CASCADE)
     
     

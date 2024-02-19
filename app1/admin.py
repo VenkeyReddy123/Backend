@@ -13,3 +13,5 @@ admin.site.register(Profile)
 admin.site.register(Orders)
 
 admin.site.register(Image)
+
+admin.site.register(Add_TO_Card)

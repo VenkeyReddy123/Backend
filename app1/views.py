@@ -305,19 +305,33 @@ def ProductDispalyView(request):
 def AddCardDetails(request):
     if(request.method=='GET'):
         Data=Add_TO_Card.objects.all()
-        Serializer_Data=AddCardSerializer(Data,many=True)
+        Serializer_Data=AddCardDisplySerializer(Data,many=True)
         return Response(Serializer_Data.data,status=status.HTTP_201_CREATED)
     elif(request.method=='POST'):
         email=request.data['Custamer_Name']
+        print(email)
         CO=Login.objects.get(Email=email)
         request.data['Custamer_Name']=CO.pk
-        print('hi')
+        print(CO.pk)
         serializer=AddCardSerializer(data=request.data)
         if(serializer.is_valid()):
              print('bye')
              serializer.save()
              return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        print('Delete')
+        email=request.data['Custamer_Name']
+        print(email)
+        CO=Login.objects.get(Email=email)
+        request.data['Custamer_Name']=CO.pk
+        ACO=Add_TO_Card.objects.filter(Custamer_Name=CO,Product_Name=request.data['Product_Name'])
+        for ob in ACO:
+            ob.delete()
+        return Response({"Message":'Success'},status=status.HTTP_201_CREATED)
+        
+
+        
 
 
 
