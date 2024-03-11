@@ -15,3 +15,13 @@ admin.site.register(Orders)
 admin.site.register(Image)
 
 admin.site.register(Add_TO_Card)
+
+admin.site.register(Custamer_Details)
+
+admin.site.register(Adress)
+# admin.site.register(Image)
+
+# admin.site.register(Rating)
+admin.site.register(CupenCode)
+admin.site.register(CheckCode)
+

@@ -23,18 +23,28 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('ChirednClass/',ChirednClass.as_   view({'get': 'list', 'post': 'create'}),name='ChirednClass'),
     path('LoginDetails/',LoginDetails,name='LoginDetails'),
     path('ProductDetails/',ProductDetails,name='ProductDetails'),
     path('OrderDetails/',OrderDetails,name='OrderDetails'),
     path('ProfileDetails/',ProfileDetails,name='ProfileDeatils'),
     # path('RatingSerializer/',RatingDetails,name='RatingDetails'),
     path('CustamerDetails/',CustamerDetails,name='CustamerDetails'),
-    # path('AddCardDetails/',AddCardDetails,name='AddCardDetails'),
+    path('AddCardDetails/',AddCardDetails,name='AddCardDetails'),
     path('UserDetails/', UserDetails,name=' UserDetails'),
     path('ImageDetails/',ImageDetails,name='ImageDetails'),
-    # path('UserCheckDetails/',UserCheckDetails,name='UserCheckDetails')
+    path('UserCheckDetails/',UserCheckDetails,name='UserCheckDetails'),
     path('UserCheck/',UserCheckDetails,name='UserCHeck'),
     path('ProductDispalyView/',ProductDispalyView,name='ProductDispalyView'),
-    path('AddCardDetails/',AddCardDetails,name='AddCardDetails')
+    path('upload_image/',upload_image,name='upload_image'),
+    path('UpdateDetails/',UpdateDetails,name='UpdateDetails'),
+    path('CuponCodeDetails/',CuponCodeDetails,name='CupondCodeDetails'),
+    path('CheckCodeDetails/',CheckCodeDetails,name='CheckCOdeDetails'),
+    path('LCODetails/',LCODetails,name='LCODetails'),
+    path('OtpDetails/',OtpDetails,name='OtpDetails'),
+    path("ForgetDetails/",ForgetDetails,name='ForgetDetails'),
+    path('CDDetails/',CDDetails,name='CDDetails'),
+    path('LoginOtpDetails/',LoginOtpDetails,name='LoginOtpDetails'),
+    path('LoginPasswordChange/',LoginPasswordChange,name='LoginPasswordChange'),
+    path('OrderDispalyDetails/', OrderDisplayDetails,name='OrderDispalyDetails')
+    # path('ImageDetails/<path:image_url>/', get_image_details, name='image_details'),
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
